@@ -1,0 +1,202 @@
+<!-- Contains the HTML elements for index.html along with some Javascipt used to store the control values -->
+<html>
+<head>
+  <!--External Sources-->
+  <link rel="stylesheet" type="text/css" href="sources/index.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+  <script language="javascript" type="text/javascript" src="sources/gpu.js"></script>
+</head>
+<body>
+  <!--Main flow window on the left-->
+  <div id = 'flowwindow' class = 'flowwindow'>
+    <canvas id = 'canvas1' style = 'z-index:1;'></canvas> <!-- Canvas for main particle paths -->
+    <canvas id = 'canvas2' style = "z-index:2;"></canvas> <!-- Canvas for control shapes -->
+  </div>
+  <!--Input Panel on Right-->
+  <div id = 'inputpanel' class = 'inputpanel'>
+    <h1>Joukowski Airfoil Flows</h1>
+    <h5>The simulation of 2D, incompressible, irrotational flow around a cylinder and then an airfoil using the Joukowski transformation</h5>
+    <div class = 'inputblock'>
+        <div class = 'inputwrapper'>
+            <h6>Angle of Attack:</h6>
+            <div class = 'inputwrapper'> <!--Wrapper div for slider and label-->
+              <p id = 'slideroutput' class = 'slideroutput'>0&#176;</p> <!--SLider label-->
+              <input type="range" min="0" max="360" value="0" class="slider" id="angleofattack">
+            </div>
+        </div>
+        <br>
+        <div class = 'inputwrapper'>
+          <h6>Length Scale: a= </h6>
+          <input id = 'lengthtxtbox' type="text" class = 'txtbox' value = '1' style="margin-left:0px;">m
+        </div>
+        <br>
+        <div class = 'inputwrapper'>
+            <h6>Flow Speed: U=</h6>
+            <input id = 'speedtxtbox' type="text" class = 'txtbox' value = '1' style="margin-left:7px;">m/s
+        </div>
+    </div>
+    <br>
+    <div class = 'inputblock'>
+        <div class = 'inputwrapper'>
+          <h6>Joukowski Transform:</h6>
+          <label class="switch"> <!--Boc around slider-->
+            <input id = 'transformswitch' type="checkbox" unchecked>
+            <span class="sliderround"></span>
+          </label>
+        </div>
+        <br>
+        <div class = 'inputwrapper'>
+            <h6>Circle Centre:</h6>
+            (<input type="text" id = 'controlx' class = 'txtbox' value = '-0.0' style="margin: 1 1 1 1;">,
+            <input type="text" id = 'controly' class = 'txtbox' value = '+0.0' style="margin: 1 1 1 1;">)
+        </div>
+      </div>
+      <br>
+      <div class = 'inputblock'>
+        <div class = 'inputwrapper'>
+          <h6>Circulation:</h6>
+           &#915;= -2&#960;Ua(<input id = 'circtxtbox' type="text" class = 'txtbox' value = '0' style="margin:0 2 0 2;">)
+        </div>
+        <br>
+        <div class = 'inputwrapper'>
+          <h6>Kutta Condition:</h6>
+          <label class="switch"> <!--Boc around slider-->
+            <input id = 'kuttaswitch' type="checkbox" unchecked>
+            <span class="sliderround"></span>
+          </label>
+        </div>
+      </div>
+      <br>
+      <div class = 'inputblock'style="text-align: center; display: block;">
+        <div class = 'inputwrapper'>
+            <input type="text" id = 'ymax' class = 'txtbox' value = '3.5' style="margin: 1 1 1 1;">
+        </div><br>
+        <div class = 'inputwrapper' style = 'display: block;'>
+            <input type="text" id = 'xmin' class = 'txtbox' value = '-5' style="margin: 1 1 1 1;">
+            <span style = 'padding: 3 3 3 3'>Bounding Coords</span>
+            <input type="text" id = 'xmax' class = 'txtbox' value = '5' style="margin: 1 1 1 1;">
+        </div>
+        <div class = 'inputwrapper'>
+            <input type="text" id = 'ymin' class = 'txtbox' value = '-3.5' style="margin: 1 1 1 1;">
+        </div>
+      </div>
+      <br>
+      <div class = 'inputblock'>
+        <div class = 'inputwrapper'>
+          <h6>Draw Objects:</h6>
+          <label class="switch"> <!--Boc around slider-->
+            <input id = 'drawSwitch' type="checkbox" checked>
+            <span class="sliderround"></span>
+          </label>
+        </div>
+      <br>
+          <div class = 'inputwrapper' style="text-align: center; display: block;">
+              <button id = 'playbtn' type="button" class = 'button'>Pause</button>
+          </div>
+      </div>
+  </div>
+</body>
+</html>
+<script>
+//Update methods for controls
+document.getElementById('angleofattack').oninput = function(){
+  var sliderrange = this.max - this.min; //Range of aot slider values
+  var sliderwidth = this.offsetWidth; //aotslider's width
+  document.getElementById('slideroutput').innerHTML = this.value+'&#176;'; //Label text
+  document.getElementById('slideroutput').style.left = this.value/sliderrange*sliderwidth  - this.value/sliderrange*19; //Moves the label
+  consts[0] = this.value*Math.PI/180; //Updates alpha value
+  document.getElementById('kuttaswitch').oninput(); //Updates Circulation
+}
+document.getElementById('lengthtxtbox').oninput = function(){
+  if (!isNaN(parseFloat(this.value))) {
+    consts[1] = parseFloat(this.value);
+    drawControlShape(); //Redraws control shape
+    document.getElementById('kuttaswitch').oninput(); //Updates Circulation
+  }
+}
+document.getElementById('speedtxtbox').oninput = function(){
+  if (!isNaN(parseFloat(this.value))) {
+    consts[2] = parseFloat(this.value);
+    document.getElementById('kuttaswitch').oninput(); //Updates Circulation
+  }
+}
+document.getElementById('transformswitch').oninput = function(){
+  consts[3] = this.checked;
+  drawControlShape(); //Redraws control shape
+}
+document.getElementById('controlx').oninput = function(){
+  if (!isNaN(parseFloat(this.value)) && parseFloat(this.value) <= 0) {
+    consts[4] = parseFloat(this.value);
+    drawControlShape(); //Redraws control shape
+    document.getElementById('kuttaswitch').oninput(); //Updates Circulation
+  }
+}
+document.getElementById('controly').oninput = function(){
+  if (!isNaN(parseFloat(this.value)) && parseFloat(this.value) >= 0) {
+    consts[5] = parseFloat(this.value);
+    drawControlShape(); //Redraws control shape
+    document.getElementById('kuttaswitch').oninput(); //Updates Circulation
+  }
+}
+document.getElementById('kuttaswitch').oninput = function(){
+  consts[6] = this.checked;
+  var txtbox = document.getElementById('circtxtbox');
+  txtbox.disabled = consts.kutta;
+  if(consts[6]){
+    txtbox.style.backgroundColor = "#CCCCCC";
+    const R = Math.sqrt(Math.pow(consts[5],2)+Math.pow(consts[1]-consts[4],2));
+    consts[7] = -4*Math.PI*consts[2]*R*Math.sin(consts[0]+Math.asin(consts[5]/R));
+  }else {
+    txtbox.style.backgroundColor = "white";
+    consts[7] = -2*Math.PI*consts[2]*consts[1]*parseFloat(txtbox.value);
+  }
+}
+document.getElementById('circtxtbox').oninput = function(){
+  if (!isNaN(parseFloat(this.value))) {
+    if (!consts[6]) {
+      consts[7] = -2*Math.PI*consts[2]*consts[1]*parseFloat(this.value);
+    }
+  }
+}
+document.getElementById('xmin').oninput = function(){
+  if (!isNaN(parseFloat(this.value))) {
+    consts[8] = parseFloat(this.value);
+    drawControlShape(); //Redraws control shape
+  }
+}
+document.getElementById('xmax').oninput = function(){
+  if (!isNaN(parseFloat(this.value))) {
+    consts[9] = parseFloat(this.value);
+    drawControlShape(); //Redraws control shape
+  }
+}
+document.getElementById('ymin').oninput = function(){
+  if (!isNaN(parseFloat(this.value))) {
+    consts[10] = parseFloat(this.value);
+    drawControlShape(); //Redraws control shape
+  }
+}
+document.getElementById('ymax').oninput = function(){
+  if (!isNaN(parseFloat(this.value))) {
+    consts[11] = parseFloat(this.value);
+    drawControlShape(); //Redraws control shape
+  }
+}
+document.getElementById('drawSwitch').oninput = function () {
+  consts[16] = this.checked;
+  drawControlShape(); //Redraws control shape
+}
+document.getElementById('playbtn').onclick = function(){
+  if (consts[17]) { //If play/pause boolean is currently true
+    consts[17] = false;
+    this.innerHTML = 'Resume';
+  }else {
+    consts[17] = true;
+    this.innerHTML = 'Pause';
+    window.requestAnimationFrame(drawFrame); //Starts drawing frames to the canvas
+  }
+}
+</script>
+<script language="javascript" type="text/javascript" src="sources/main.js"></script>
+<script language="javascript" type="text/javascript" src="sources/field.js"></script>
+<script language="javascript" type="text/javascript" src="sources/airfoil.js"></script>

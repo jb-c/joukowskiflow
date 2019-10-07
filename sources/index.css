@@ -1,0 +1,161 @@
+/* Contains CSS styling index.html */
+
+:root{
+    --colour1:#bdc3c7; /*Grey*/
+    --colour2:#555936; /*Green - accent colour*/
+    --colour3:white; /*White - accent colour*/
+    --colour4:#516373; /*grey/blue - main background*/
+    --colour5: #ccc; /*Grey*/
+    --colour6: #BACDD9; /*light blue - box colour*/
+    font-family: 'Montserrat', sans-serif;
+}
+
+.flowwindow { /*Styles the flow window as a whole*/
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: calc(75% - 20px); /* Accounts for margin,padding so fills rest of available space*/
+  height: 100%;
+  margin:  0 0 0 0;
+  background-color: #333333;
+}
+
+.flowwindow canvas { /*Styles the canvases*/
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.inputpanel { /*Styles the input panel as a whole*/
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 25%;
+  height: 100%;
+  margin:  0 0 0 0;
+  background-color: var(--colour4);
+  padding: 5px 10px 5px 10px;
+}
+
+.inputblock{ /*The inputblock wrapper class*/
+  background-color: var(--colour6);
+  padding: 10px 5px 10px 5px;
+  border-radius: 7px;
+}
+
+.inputwrapper{ /*The inputwrapper wrapper class*/
+  padding:auto;
+  margin: 0;
+  display: inline-block;
+}
+
+.inputwrapper h6 { /*The lables for controls*/
+  display: inline-block;
+  margin: 3px;
+  font-size: 14px;
+}
+
+.slider { /*THe slider class*/
+  -webkit-appearance: none;
+  background-color: var(--colour1);
+  width: 240px;
+  height: 5px;
+  border-radius: 5px;
+  margin: auto;
+  outline: 0;
+}
+
+.slider::-webkit-slider-thumb { /*THe thumb of the slider class*/
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--colour2);
+  opacity: 0.7;
+  border: 2px solid var(--colour3);
+  transition: .3s ease-in-out;
+}
+
+.slider::-webkit-slider-thumb:hover { /*Slider thumb hover effects*/
+  opacity: 1;
+  background-color: var(--colour3);
+  border: 2px solid var(--colour2);
+  transform: scale(1.1);
+}
+
+.slideroutput { /*Label to go with slider*/
+  position: relative;
+  margin-left: 3px;
+  left: 0px;
+  font-size: 10px;
+}
+
+.txtbox { /*Styles the textboxes*/
+  -webkit-appearance: none;
+  background-color: var(--colour3);
+  width: 30px;
+  height: 20px;
+  border: 1.5px solid var(--colour2);
+  padding-left: 1px;
+  outline: 0;
+  display: inline-block;
+  text-align: center;
+}
+
+.button { /*Styles the buttonclass*/
+  display: inline;
+  -webkit-appearance: none;
+  background-color: var(--colour3);
+  width: auto;
+  height: 20px;
+  border: 1.5px solid var(--colour2);
+  transition: .3s ease-in-out;
+  outline: 0;
+}
+
+.button:hover{
+  transform: scale(1.02);
+}
+
+.switch { /* The switch - the box around the slider */
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  margin: 6px;
+  height: 17px;
+  float: right;
+}
+
+.switch input { /* Hide default HTML checkbox */
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.sliderround{ /* The slider*/
+  position: absolute;
+  top: 0;left: 0;right: 0;bottom: 0;
+  background-color: var(--colour5);
+  transition: .4s;
+  border-radius: 17px;
+}
+
+.sliderround:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  bottom: 2px;
+  border-radius: 50%;
+  background-color: var(--colour3);
+  transition: .4s;
+}
+
+input:checked + .sliderround {
+  background-color: var(--colour2);
+}
+
+input:checked + .sliderround:before {
+  transform: translateX(13px);
+}
