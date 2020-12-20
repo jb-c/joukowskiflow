@@ -2,7 +2,7 @@
 Airflow simulation around Joukowski airfoils, made in JavaScript.
 ![alt text](https://github.com/jb-c/joukowskiflow/blob/master/media/pic1.jpg "Screenshot of flow")
 
-[Live Demo](https://joukowskiflow.000webhostapp.com/) (Only tested on chrome for windows 10 desktop)
+[Live Demo](https://flowsimulation.000webhostapp.com/) (Only tested on chrome for windows 10 desktop)
 
 ## The Process Involved
 Firstly we simulate irrotational, incompressible flow around a cylinder ([Wiki](https://en.wikipedia.org/wiki/Potential_flow_around_a_circular_cylinder))
